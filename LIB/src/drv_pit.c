@@ -52,7 +52,7 @@ void drv_pit_Init(PIT_InitTypeDef *PIT_InitStruct)
 	SIM->SCGC       |= SIM_SCGC_PIT_MASK;
 
 	PIT->MCR &= ~PIT_MCR_MDIS_MASK;
-	cnt = core_clk_khz * PIT_InitStruct->PIT_Period;
+	cnt = bus_clk_khz * PIT_InitStruct->PIT_Period;
 	PIT->CHANNEL[PIT_InitStruct->PIT_Channel].LDVAL = cnt;	/*  设置溢出中断时间  */
 	PIT->CHANNEL[PIT_InitStruct->PIT_Channel].TFLG |= PIT_TFLG_TIF_MASK;					/*  清除中断标志位  */
 	

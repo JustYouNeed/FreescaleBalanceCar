@@ -47,7 +47,7 @@ static uint8_t UartRxBuff[UART_TX_BUFF_SIZE];
 */
 void bsp_uart_ParaInit(void)
 {
-	uart_info.uart = UART2;
+	uart_info.uart = UART0;
 	uart_info.pRxBuff = UartRxBuff;
 	uart_info.pTxBuff = UartTxBuff;
 	uart_info.RxBuffSize = UART_RX_BUFF_SIZE;
@@ -88,7 +88,7 @@ void bsp_uart_Config(void)
 //	uart_info.uart->C2 |= 1 << 6;
 //	uart_info.uart->C2 |= 1 << 7;
 	
-	NVIC_EnableIRQ(UART2_IRQn);
+	NVIC_EnableIRQ(UART0_IRQn);
 }
 
 

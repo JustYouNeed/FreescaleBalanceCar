@@ -52,8 +52,8 @@
 #define FTM2_CH0_PIN    H0        //C0  H0 F0              
 #define FTM2_CH1_PIN    H1        //C1  H1 F1  
 #define FTM2_CH2_PIN    D0        //C2  G4 D0  
-#define FTM2_CH3_PIN    D1        //C3  G5 D1
-#define FTM2_CH4_PIN    B4        //B4  G6  
+#define FTM2_CH3_PIN    G5        //C3  G5 D1
+#define FTM2_CH4_PIN    G6        //B4  G6  
 #define FTM2_CH5_PIN    G7        //B5  G7              
 
 

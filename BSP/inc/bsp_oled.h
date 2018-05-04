@@ -15,7 +15,7 @@
 # ifndef __BSP_OLED_H
 # define __BSP_OLED_H
 
-#include "common.h"
+# include "headfile.h"
 
 
 //OLED模式设置
@@ -34,51 +34,67 @@
 /*-----------------OLED端口定义----------------*/
 
 # define OLED_CS_PIN		C7
-# define OLED_CS_Clr()  gpio_set(OLED_CS_PIN, GPIO_PIN_RESET)
-# define OLED_CS_Set()  gpio_set(OLED_CS_PIN, GPIO_PIN_SET)
+# define OLED_CS_Clr()  gpio_set(OLED_CS_PIN, 0)
+# define OLED_CS_Set()  gpio_set(OLED_CS_PIN, 1)
 
-# define OLED_RST_PIN		A7
-# define OLED_RST_Clr() gpio_set(OLED_RST_PIN, GPIO_PIN_RESET)
-# define OLED_RST_Set() gpio_set(OLED_RST_PIN, GPIO_PIN_SET)
-
-
-# define OLED_DC_PIN		A6
-# define OLED_DC_Clr()  gpio_set(OLED_DC_PIN, GPIO_PIN_RESET)
-# define OLED_DC_Set()  gpio_set(OLED_DC_PIN, GPIO_PIN_SET)
+# define OLED_RST_PIN		I3
+# define OLED_RST_Clr() gpio_set(OLED_RST_PIN, 0)
+# define OLED_RST_Set() gpio_set(OLED_RST_PIN, 1)
 
 
-# define OLED_SCK_PIN		F3
-# define OLED_SCK_Clr()  gpio_set(OLED_SCK_PIN, GPIO_PIN_RESET)
-# define OLED_SCK_Set()  gpio_set(OLED_SCK_PIN, GPIO_PIN_SET)
+# define OLED_DC_PIN		C6
+# define OLED_DC_Clr()  gpio_set(OLED_DC_PIN, 0)
+# define OLED_DC_Set()  gpio_set(OLED_DC_PIN, 1)
 
 
-# define OLED_DIN_PIN		F2
-# define OLED_DIN_Clr()  gpio_set(OLED_DIN_PIN, GPIO_PIN_RESET)
-# define OLED_DIN_Set()  gpio_set(OLED_DIN_PIN, GPIO_PIN_SET)
+# define OLED_SCK_PIN		E3
+# define OLED_SCK_Clr()  gpio_set(OLED_SCK_PIN, 0)
+# define OLED_SCK_Set()  gpio_set(OLED_SCK_PIN, 1)
+
+
+# define OLED_DIN_PIN		I2
+# define OLED_DIN_Clr()  gpio_set(OLED_DIN_PIN, 0)
+# define OLED_DIN_Set()  gpio_set(OLED_DIN_PIN, 1)
 
 # define OLED_CMD  0	//写命令
 # define OLED_DATA 1	//写数据
 
-static uint8_t FRONT_SIZE = 16;
+//static uint8_t FRONT_SIZE = 16;
 
-uint32_t oled_pow(uint8_t m,uint8_t n);
+//uint32_t oled_pow(uint8_t m,uint8_t n);
 void bsp_oled_Config(void);
-void bsp_oled_WRByte(uint8_t dat,uint8_t cmd);	    
-void bsp_oled_DisplayON(void);
-void bsp_oled_DisplayOFF(void);
-void bsp_oled_Clear(void);
-void bsp_oled_SetFontSize(uint8_t size);
-void bsp_oled_DrawPoint(uint8_t x,uint8_t y,uint8_t t);
-void bsp_oled_Fill(uint8_t x1,uint8_t y1,uint8_t x2,uint8_t y2,uint8_t dot);
-void bsp_oled_ShowChar(uint8_t x,uint8_t y,uint8_t chr);
-void bsp_oled_ShowInteger(uint8_t x,uint8_t y, int num, uint8_t size);
-void bsp_oled_ShowFloat(uint8_t x, uint8_t y, float num, uint8_t size);
-void bsp_oled_ShowString(uint8_t x,uint8_t y, uint8_t *p);	 
-void bsp_oled_SetPos(unsigned char x, unsigned char y);
-void bsp_oled_ShowChinese(uint8_t x,uint8_t y,uint8_t no);
-void bsp_oled_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,unsigned char BMP[]);
+//void bsp_oled_WRByte(uint8_t dat,uint8_t cmd);	    
+//void bsp_oled_DisplayON(void);
+//void bsp_oled_DisplayOFF(void);
+//void bsp_oled_Clear(void);
+//void bsp_oled_SetFontSize(uint8_t size);
+//void bsp_oled_DrawPoint(uint8_t x,uint8_t y,uint8_t t);
+//void bsp_oled_Fill(uint8_t x1,uint8_t y1,uint8_t x2,uint8_t y2,uint8_t dot);
+//void bsp_oled_ShowChar(uint8_t x,uint8_t y,uint8_t chr);
+//void bsp_oled_ShowInteger(uint8_t x,uint8_t y, int num, uint8_t size);
+//void bsp_oled_ShowFloat(uint8_t x, uint8_t y, float num, uint8_t size);
+//void bsp_oled_ShowString(uint8_t x,uint8_t y, uint8_t *p);	 
+//void bsp_oled_SetPos(unsigned char x, unsigned char y);
+//void bsp_oled_ShowChinese(uint8_t x,uint8_t y,uint8_t no);
+//void bsp_oled_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,unsigned char BMP[]);
 
+//#define OLED_CMD  0	//写命令
+//#define OLED_DATA 1	//写数据
 
+//OLED控制用函数
+void oled_wr_byte(uint8_t dat,uint8_t cmd);	    
+void oled_displayON(void);
+void oled_displayOFF(void);
+void oled_refreshGram(void);  		    
+void oledInit(void);
+void oled_clear(void);
+void oled_drawPoint(uint8_t x,uint8_t y,uint8_t t);
+uint8_t oled_readPoint(uint8_t x,uint8_t y);
+void oled_fill(uint8_t x1,uint8_t y1,uint8_t x2,uint8_t y2,uint8_t dot);
+void oled_showChar(uint8_t x,uint8_t y,uint8_t chr,uint8_t f_w,uint8_t f_h,uint8_t mode);
+void oled_showNum(uint8_t x,uint8_t y,uint32_t num,uint8_t len,uint8_t f_w,uint8_t f_h);
+void oled_showString(uint8_t x,uint8_t y,const uint8_t *p,uint8_t f_w,uint8_t f_h);	
+void oled_showPicture(uint8_t x,uint8_t y,const uint8_t *p,uint8_t p_w,uint8_t p_h);
 
 # endif
 

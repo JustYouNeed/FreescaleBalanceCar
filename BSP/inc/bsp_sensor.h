@@ -29,20 +29,20 @@
 # define SENSOR_2				ADC0_SE12
 # define SENSOR_3				ADC0_SE7
 # define SENSOR_4				ADC0_SE6
-# define SENSOR_5				ADC0_SE5
-# define SENSOR_6				ADC0_SE4
+# define SENSOR_5				ADC0_SE14
+# define SENSOR_6				ADC0_SE11
 
 # define SENSOR_FIFO_SIZE		10
 
 /* 传感器ID枚举变量   */
 typedef enum
 {
-	SENSOR_V_LM = 0x0,		/*  Vertical Left Most   */
-	SENSOR_H_LM,					/*  Horizental Left Most  */
-	SENSOR_H_L,						/*  Horizental Left  */
+//	SENSOR_V_LM = 0x0,		/*  Vertical Left Most   */
+//	SENSOR_H_LM,					/*  Horizental Left Most  */
+	SENSOR_H_L=0x0,						/*  Horizental Left  */
 	SENSOR_H_R,						/*  Horizental Right  */
-	SENSOR_H_RM,					/*  Horizental Right Most  */
-	SENSOR_V_RM,					/*  Vertical Right Most  */
+//	SENSOR_H_RM,					/*  Horizental Right Most  */
+//	SENSOR_V_RM,					/*  Vertical Right Most  */
 	SENSOR_COUNT,				
 }SENSOR_ID_EnumType;
 

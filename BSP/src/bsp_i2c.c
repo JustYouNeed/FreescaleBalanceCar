@@ -8,9 +8,9 @@ void bsp_i2c_Start(IIC_TypeDef i2c_structure)
 	i2c_structure.set_sda_high();
 	i2c_structure.set_scl_high();
 	
-	bsp_tim_DelayUs(10);
+	bsp_tim_DelayUs(4);
 	i2c_structure.set_sda_low();
-	bsp_tim_DelayUs(10);
+	bsp_tim_DelayUs(4);
 	i2c_structure.set_scl_low();
 }
 
@@ -21,12 +21,12 @@ void bsp_i2c_Stop(IIC_TypeDef i2c_structure)
 	i2c_structure.set_scl_low();
 	i2c_structure.set_sda_low();
 	
-	bsp_tim_DelayUs(10);
+	bsp_tim_DelayUs(4);
 	
 	i2c_structure.set_scl_high();
 	i2c_structure.set_sda_high();
 	
-	bsp_tim_DelayUs(10);
+	bsp_tim_DelayUs(4);
 }
 void bsp_i2c_Ack(IIC_TypeDef i2c_structure)
 {

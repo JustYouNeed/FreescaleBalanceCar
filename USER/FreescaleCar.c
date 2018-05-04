@@ -22,9 +22,45 @@
 */
 # include "FreescaleCar.h"
 # include "bsp_mpu.h"
+# include "headfile.h"
+
+/*  小车目标速度  */
+# define CAR_TARGET_SPEED 40
+
+/*  静止时Z轴角速度漂移  */
+# define MPU_GRYOZ_ZERO	-42
+
+/*  速度控制周期,30ms  */
+# define SPEED_CONTROL_PERIOD	100	
+
+/*  转向控制周期,5ms  */
+# define DIRCTION_CONTROL_PERIOD	5
+
 
 /*  小车控制结构体,控制小车掺需要用到的数据全部在这个结构体里面,且可以直接使用  */
 Car_TypeDef Car;
+
+/*  小车速度环控制PWM输出  */
+static float g_SpeedControlOut = 0;						/*  最终的速度环输出  */
+static float g_SpeedControlOutNew = 0;				/*  本次速度环的输出  */
+static float g_SpeedControlOutOld = 0;				/*  上次速度环的输出  */
+static uint16_t g_SpeedControlPeriod = 0;			/*  速度控制周期计数器,用于将速度环的输出平滑处理  */
+
+/*  小车方向控制变量  */
+static float g_DirectionControlOut = 0;				/*  最终方向环的输出  */
+static float g_DirectionControlOutNew = 0;		/*  本次方向环的输出  */
+static float g_DirciotnControlOutOld = 0;			/*  上次方向环的输出  */
+static uint16_t g_DirectionControlPeriod = 0;	/*  方向控制周期计数器,用于将方向控制的输出平滑处理  */
+
+/*  直立环控制变量  */
+static float g_BalanceControlOut = 0;
+
+/*  冲出跑道计数器,该值大于阈值时,说明冲出跑道了,停车  */
+static uint16_t g_LoseLineCounter = 0;
+
+static int16_t g_TargetSpeedControl = 0;
+
+static float g_GryozKd = 0;			/*  角速度控制转向系数  */
 
 
 /*
@@ -61,6 +97,21 @@ void Car_ParaInit(void)
 	Car.PID.Turn_Ki = flash_read(PID_PARA_FLASH_ADDR, 28, float);
 	Car.PID.Turn_Kd = flash_read(PID_PARA_FLASH_ADDR, 32, float);
 	
+	
+		/*  初始化方向模糊PID参数  */
+	Car.DirFuzzy.DeltaKdMax = 10;
+	Car.DirFuzzy.DeltaKiMax = 0;
+	Car.DirFuzzy.DeltaKpMax = 0.8;
+	Car.DirFuzzy.DErrMax = 10;
+	Car.DirFuzzy.ErrMax = 90;
+	Car.DirFuzzy.KP = 3;
+	Car.DirFuzzy.KD = 180;
+	Car.DirFuzzy.KPMax = 5;//Car.PID.DirectionKp;
+	Car.DirFuzzy.KIMax = 0;//Car.PID.DirectionKi;
+	Car.DirFuzzy.KDMax = 330;//Car.PID.DirectionKd;
+	fuzzy_PIDInit(&Car.DirFuzzy);
+	
+	
 	/*  初始化车子的传感器参数,从Flash中读取标定值  */
 	for(i = 0; i < SENSOR_COUNT; i ++)
 	{
@@ -74,7 +125,6 @@ void Car_ParaInit(void)
 	}
 	
 	/*  电机控制参数初始化  */
-	Car.Motor.PWM_Frequency = 10;	/*  电机PWM频率为10KHz  */
 	Car.Motor.LeftPwm = 0;
 	Car.Motor.RightPwm = 0;
 	Car.Motor.LeftEncoder = 0;
@@ -82,28 +132,10 @@ void Car_ParaInit(void)
 	Car.Motor.LeftSpeed = 0;
 	Car.Motor.RightSpeed = 0;
 	
-	
-	Car.BalanceAngle = 12.4;
-	
-}
+	Car.TargetSpeed = 0;
 
-/*
-*********************************************************************************************************
-*                            Car_ParaStroe              
-*
-* Description: 
-*             
-* Arguments  : 
-*
-* Reutrn     : 
-*
-* Note(s)    : 
-*********************************************************************************************************
-*/
-void Car_ParaStroe(void)
-{
-//	FLASH_EraseSector(CAR_PARA_FLASH_ADDR);
-//	FLASH_WriteSector(CAR_PARA_FLASH_ADDR, (const uint8_t *)&Car.BaseSpeed, 2, 0);
+	Car.MaxPWM = 800;
+	Car.BalanceAngle = 6.7;
 }
 
 
@@ -125,12 +157,81 @@ void Car_Running(void)
 	bsp_led_Toggle(1);
 }
 
+/*
+*********************************************************************************************************
+*                                          
+*
+* Description: 
+*             
+* Arguments  : 
+*
+* Reutrn     : 
+*
+* Note(s)    : 
+*********************************************************************************************************
+*/
+void Car_ControlStop(void)
+{
+}
+
 
 /*
 *********************************************************************************************************
-*                        Car_BalancePIDCalc                  
+*                                          
 *
-* Description: 小车直立环PID计算
+* Description: 
+*             
+* Arguments  : 
+*
+* Reutrn     : 
+*
+* Note(s)    : 
+*********************************************************************************************************
+*/
+void Car_Reset(void)
+{
+}
+
+/*
+*********************************************************************************************************
+*                                          
+*
+* Description: 
+*             
+* Arguments  : 
+*
+* Reutrn     : 
+*
+* Note(s)    : 
+*********************************************************************************************************
+*/
+void Car_ControlStart(void)
+{
+}
+
+/*
+*********************************************************************************************************
+*                                          
+*
+* Description: 
+*             
+* Arguments  : 
+*
+* Reutrn     : 
+*
+* Note(s)    : 
+*********************************************************************************************************
+*/
+void Car_ParaStore(void)
+{
+}
+
+
+/*
+*********************************************************************************************************
+*                       Car_BalanceControl                   
+*
+* Description: 小车直立环控制
 *             
 * Arguments  : None.
 *
@@ -139,28 +240,28 @@ void Car_Running(void)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-int16_t Car_BalancePIDCalc(float angle, float pitch)
+void Car_BalanceControl(void)
 {
-	float fBias;   //每个时刻的偏差
-	int16_t iBalance_PWM; //计算后的PWM
-	static float sfBalance_ErrSum;//	
+	float Error = 0, ErrorDiff = 0;   /*  每个时刻的偏差,以及偏差微分 */
+	float Kp = 0, Kd = 0;
 	
-	fBias = angle - Car.BalanceAngle;//偏差等于当前角度减去初始化时的偏差角再减去无电机控制时能直立的角度
-	
-	Car.PID.ErrSum += fBias; //以和代替积分
-	
-	if(sfBalance_ErrSum > 7200) sfBalance_ErrSum = 7200;  //积分限幅
-	else if(sfBalance_ErrSum<-7200)	sfBalance_ErrSum = -7200;
-	iBalance_PWM = (int16_t)((-Car.PID.Balance_Kp * fBias) + (-Car.PID.Balance_Ki * Car.PID.ErrSum ) + (-Car.PID.Balance_Kd * pitch));
-	return iBalance_PWM ;
-}
+	/*  计算偏差  */
+	Error = Car.BalanceAngle - Car.MPU.Pitch;
 
+	ErrorDiff = Car.MPU.Gryoy;
+	
+	Kp = Car.PID.Balance_Kp;
+	Kd = Car.PID.Balance_Kd;
+	
+	/*  直立环的控制采用PD控制,输入为直立偏差,以及直立角速度  */
+	g_BalanceControlOut = Kp * Error - Kd * ErrorDiff;
+}
 
 /*
 *********************************************************************************************************
-*                       Car_VelocityPIDCalc                   
+*                          Car_SpeedControl                
 *
-* Description: 小车速度环PID计算
+* Description: 小车速度环控制,采用积分分离PI控制
 *             
 * Arguments  : None.
 *
@@ -169,33 +270,50 @@ int16_t Car_BalancePIDCalc(float angle, float pitch)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-int16_t Car_VelocityPIDCalc(int16_t LeftSpeed, int16_t RightSpeed)
+void Car_SpeedControl(void)
 {
-	static float Veclocity_Least, Encoder, Encoder_Integral;
-	int16_t Velocity;
+	static float SpeedFilter, SpeedIntegal;
+	int32_t LeftEnconder = 0, RightEnconder = 0;
+	float SpeedError = 0;
+	float Kp = 0, Ki = 0, Kd = 0;
 	
+	/*  由于两个编码器旋转了180度,所以有一个极性差  */
+	LeftEnconder = (READ_DIR(LEFTENCONDER_DIR_PIN) == 0) ? (-Car.Motor.LeftEncoder) : Car.Motor.LeftEncoder;
+	RightEnconder = (READ_DIR(RIGHTENCONDER_DIR_PIN) == 1) ? (-Car.Motor.RightEncoder) : (Car.Motor.RightEncoder);
+	Car.Motor.LeftEncoder = 0;
+	Car.Motor.RightEncoder = 0;
 	
-	Veclocity_Least = LeftSpeed + RightSpeed - 0;
+	/*  将速度进行转换,计算成转/秒  */
+	Car.CarSpeed = (LeftEnconder + RightEnconder) / 2 * CAR_SPEED_CONSTANT;
+		
+		/*  速度偏差  */
+	SpeedError = Car.TargetSpeed -Car.CarSpeed;
 	
-	Encoder *= 0.7;
-	Encoder += (Veclocity_Least * 0.3);
-	Encoder_Integral += Encoder;
+	/*  低通滤波,让速度平滑过渡  */
+	SpeedFilter *= 0.7;
+	SpeedFilter += (SpeedError * 0.3);
 	
-	if(Encoder_Integral > 7200) Encoder_Integral = 7200;			//积分限幅
-	else if(Encoder_Integral < -7200) Encoder_Integral = -7200;		//
+	if(SpeedError < 10 && SpeedError >= -10)
+		SpeedIntegal += SpeedFilter;
 	
-	/*  如果小车被放倒,则清除积分  */
-	if((Car.MPU.Pitch - Car.BalanceAngle) < 10 || (Car.MPU.Pitch- Car.BalanceAngle) > 40) Encoder_Integral = 0;
+	/*  积分限幅  */
+	if(SpeedIntegal > 3000) SpeedIntegal = 3000;			//积分限幅
+	else if(SpeedIntegal < -3000) SpeedIntegal = -3000;		//
 	
-	Velocity = (int16_t)(Encoder * (Car.PID.Velocity_Kp) + Encoder_Integral * (Car.PID.Velocity_Ki));	//速度环PID计算	
-	return Velocity;
-}
+	Kp = Car.PID.Velocity_Kp;
+	Ki = Car.PID.Velocity_Ki;
+	Kd = Car.PID.Velocity_Kd;
+	
+	/*  速度环PI控制 */
+	g_SpeedControlOutOld = g_SpeedControlOutNew;
+	g_SpeedControlOutNew = SpeedFilter * Kp +	SpeedIntegal * Ki;
 
+}
 /*
 *********************************************************************************************************
-*                      Car_TurnPIDCalc                    
+*                          Car_SpeedControlOutput                
 *
-* Description: 小车转向环PID计算
+* Description: 将速度环的输出分为速度控制周期的n等份输出到电机,可以让速度变化更平滑
 *             
 * Arguments  : None.
 *
@@ -204,17 +322,19 @@ int16_t Car_VelocityPIDCalc(int16_t LeftSpeed, int16_t RightSpeed)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-void Car_TurnPIDCalc(void)
+void Car_SpeedControlOutput(void)
 {
+	float SpeedControlValue;
 	
+	SpeedControlValue = g_SpeedControlOutNew - g_SpeedControlOutOld;
+	g_SpeedControlOut = SpeedControlValue * (g_SpeedControlPeriod + 1) / SPEED_CONTROL_PERIOD + g_SpeedControlOutOld;
 }
-
 
 /*
 *********************************************************************************************************
-*                       Car_MotorControl                   
+*                        Car_DirctionControl                  
 *
-* Description: 当PID计算完后调用该函数进行电机控制
+* Description: 小车方向环控制
 *             
 * Arguments  : None.
 *
@@ -223,10 +343,121 @@ void Car_TurnPIDCalc(void)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-void Car_MotorControl(void)
+void Car_DirctionControl(void)
 {
-	bsp_motor_SetPwm(Car.Motor.LeftPwm, Car.Motor.RightPwm);
+	static float LastError = 0;
+	float Error = 0, ErrorDiff = 0, Gyro_Z = 0;
+	float Kp = 0, Kd = 0;
+	
+	Error = Car.HorizontalAE;
+	ErrorDiff = Error - LastError;
+	
+	Gyro_Z = Car.MPU.Gryoy - MPU_GRYOZ_ZERO;
+	
+	/*  由于模糊PID算出来的值有负的,所以需要极性判断  */
+	fuzzy_PIDClac(&Car.DirFuzzy, Error, ErrorDiff);
+	
+	Kp = (Car.DirFuzzy.KP < 0) ? (- Car.DirFuzzy.KP) : Car.DirFuzzy.KP;
+	Kd = (Car.DirFuzzy.KD < 0) ? (- Car.DirFuzzy.KD) : Car.DirFuzzy.KD;
+
+//	Kp = Car.PID.Turn_Kp;
+//	Kd = Car.PID.Turn_Kd;
+	
+	/*  保存上次的PWM  */
+	g_DirciotnControlOutOld = g_DirectionControlOutNew; 
+	
+	/*  计算PWM.利用陀螺仪的角速度来控制转向  */
+	g_DirectionControlOutNew = -Error *  Kp + ErrorDiff * -Kd + g_GryozKd * Gyro_Z;
+	
+	if(Car.HorizontalAE < 4 && Car.HorizontalAE>-4) g_DirectionControlOutNew = 0;
+	
+	/*  保存上个时刻的误差  */
+	LastError = Error;
 }
+/*
+*********************************************************************************************************
+*                         Car_DirctionControlOutput                 
+*
+* Description: 将转向环的输出分为转向控制周期的n等份进行输出,让速度变化平滑
+*             
+* Arguments  : None.
+*
+* Reutrn     : None.
+*
+* Note(s)    : None.
+*********************************************************************************************************
+*/
+void Car_DirctionControlOutput(void)
+{
+	float DirectionOutput = 0;
+	
+	DirectionOutput = g_DirectionControlOutNew - g_DirciotnControlOutOld;
+	g_DirectionControlOut = DirectionOutput * (g_DirectionControlPeriod + 1) / DIRCTION_CONTROL_PERIOD + g_DirciotnControlOutOld;
+}
+
+/*
+*********************************************************************************************************
+*                            Car_MotorOutput              
+*
+* Description: 将速度环,转向环,直立环的输出进行叠加,输出到电机
+*             
+* Arguments  : None.
+*
+* Reutrn     : None.
+*
+* Note(s)    : None.
+*********************************************************************************************************
+*/
+
+void Car_MotorOutput(void)
+{
+	int16_t LeftPwm = 0, RightPwm = 0;
+	
+	/*  电机控制PWM为平衡环,速度环,转向环叠加  */
+	LeftPwm = (int16_t)(g_BalanceControlOut + g_SpeedControlOut - g_DirectionControlOut);
+	RightPwm = (int16_t)(g_BalanceControlOut + g_SpeedControlOut + g_DirectionControlOut);
+	
+	/*  增加死区  */
+	if(LeftPwm > 0) LeftPwm += MOTOR_DEAD_VAL;
+	else if(LeftPwm < 0) LeftPwm -= MOTOR_DEAD_VAL;
+	
+	if(RightPwm > 0) RightPwm += (MOTOR_DEAD_VAL);
+	else if(RightPwm < 0) RightPwm -= (MOTOR_DEAD_VAL);
+	
+	/*  对PWM进行限幅  */
+	if(LeftPwm > Car.MaxPWM) LeftPwm = Car.MaxPWM;
+	else if(LeftPwm < -Car.MaxPWM) LeftPwm = -Car.MaxPWM;
+	
+	if(RightPwm > Car.MaxPWM) RightPwm = Car.MaxPWM;
+	else if(RightPwm < -Car.MaxPWM) RightPwm = -Car.MaxPWM;
+		
+	/*  保存计算结果  */
+	Car.Motor.LeftPwm = LeftPwm;
+	Car.Motor.RightPwm = RightPwm;
+	
+	/*  检测是否冲出跑道  */
+//	if(Car.Sensor[SENSOR_H_L].Average < 15 && Car.Sensor[SENSOR_H_R].Average < 15)
+//		g_LoseLineCounter ++;
+	
+	/*  当车子前倾角或后倾角过大时停车,  */
+	if((Car.MPU.Pitch - Car.BalanceAngle) > 30 || (Car.MPU.Pitch - Car.BalanceAngle) < -9)
+	{
+		bsp_motor_SetPwm(0,0);
+		g_TargetSpeedControl = 0;
+		Car.TargetSpeed = 0;
+	} 
+//	else if(g_LoseLineCounter > 2)		/*  冲出跑道时停车  */
+//	{
+//		g_TargetSpeedControl = 0;
+//		Car.TargetSpeed = 0;
+//	}
+	else
+	{
+		/*  输出到电机  */
+		bsp_motor_SetPwm(Car.Motor.LeftPwm, Car.Motor.RightPwm);
+	}
+}
+
 /*
 *********************************************************************************************************
 *                       Car_Control                   
@@ -245,29 +476,70 @@ void Car_MotorControl(void)
 /*  对于直立小车来说,需要有三个PID计算,直接PID,速度PID,转向PID  */
 void Car_Control(void)
 {
-	int16_t PWM = 0;
-	/*  控制函数中翻转LED状态,由此可以测量该函数运行时间  */
-	bsp_led_Toggle(1);
-		
-	/*  处理MPU数据,得到小车当前角度,加速度等  */
-//	bsp_mpu_DataProcess();
+	static uint16_t Car_ControlCounter = 0;
+	static uint16_t SpeedControlCounter = 0;
+	static uint16_t DirectionControlCounter = 0;
 	
-	/*  小车电磁传感器数据处理,得到各自电感的归一化值,以及其他数据  */
-	bsp_sensor_DataProcess();
 	
-	/*  小车电机数据处理  */
-	bsp_encoder_SpeedCalc();
+	Car_ControlCounter++;
 	
-	/*  对处理完的数据进行PID计算,调整小车姿态  */
-	PWM = Car_BalancePIDCalc(Car.MPU.Pitch, Car.MPU.Gryoy);			/*  首先进行直立环PID计算  */
-	PWM += Car_VelocityPIDCalc(Car.Motor.LeftSpeed, Car.Motor.RightSpeed);		/*  速度环  */
-	Car_TurnPIDCalc();				/*  转向环  */
-	if(PWM > 300) PWM = 300;
-	if(PWM <- 300) PWM = -300;
-	Car.Motor.LeftPwm = PWM;
-	Car.Motor.RightPwm = PWM;
-	/*  将PID计算结果输出到小车电机  */
-	Car_MotorControl();
+	/*  将速度环的输出均分  */
+	g_SpeedControlPeriod++;
+	Car_SpeedControlOutput();
+	
+	/*  将转向环的输出均分  */
+	g_DirectionControlPeriod++;
+	Car_DirctionControlOutput();
+	
+	/*  小车控制状态机  */
+	switch(Car_ControlCounter)
+	{
+		case 1:		/*  每5ms读一次编码器的值  */
+		{
+			bsp_encoder_ReadCounter();
+		}break;
+		case 2: 
+		{
+			SpeedControlCounter++;
+			/*  因为每5ms进入一次,所以进行除5  */
+			if(SpeedControlCounter >= SPEED_CONTROL_PERIOD/5)		/*  速度控制  */
+			{
+				SpeedControlCounter = 0;
+				g_SpeedControlPeriod = 0;
+				g_TargetSpeedControl ++;
+				if(Car.TargetSpeed < CAR_TARGET_SPEED)
+				{
+					Car.TargetSpeed = CAR_TARGET_SPEED*(g_TargetSpeedControl+1)/20;
+				}
+				Car_SpeedControl();
+			}
+		}break;
+		case 3: bsp_sensor_DataProcess(); break;		/*  5ms进行一次传感器的数据处理  */
+		case 4: 
+		{
+			DirectionControlCounter++;
+			if(DirectionControlCounter >= DIRCTION_CONTROL_PERIOD/5)	/*  方向控制  */
+			{
+				DirectionControlCounter = 0;
+				g_DirectionControlPeriod = 0;
+				Car_DirctionControl();
+			}
+		}break;
+		case 5: 		/*  5ms进行一次电机输出,以及直立控制  */
+		{
+			Car_BalanceControl();
+			Car_MotorOutput();
+			Car_ControlCounter = 0;
+		}break;
+		default: 
+		{
+			DirectionControlCounter = 0;
+			g_SpeedControlPeriod = 0;
+			SpeedControlCounter = 0;
+			g_DirectionControlPeriod = 0;
+			Car_ControlCounter = 0;
+		}break;
+	}
 }
 	
 	

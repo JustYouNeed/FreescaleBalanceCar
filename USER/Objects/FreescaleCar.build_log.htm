@@ -21,46 +21,49 @@ Target DLL:      Segger\JL2CM3.dll V2.99.23.0
 Dialog DLL:      TARMCM1.DLL V1.10.0.0
  
 <h2>Project:</h2>
-E:\学习资料\比赛\飞思卡尔智能车大赛\直立\FreescaleCar\USER\FreescaleCar.uvprojx
-Project File Date:  03/08/2018
+E:\学习资料\比赛\飞思卡尔智能车大赛\直立电磁组\FreescaleCar\USER\FreescaleCar.uvprojx
+Project File Date:  04/23/2018
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 3 (build 300)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'FreescaleCar'
-compiling main.c...
-compiling FreescaleCar.c...
-compiling bsp.c...
-compiling bsp_sensor.c...
-..\BSP\src\bsp_sensor.c(196): warning:  #550-D: variable "CalibrationValueTemp" was set but never used
-  	uint16_t CalibrationValueTemp[SENSOR_COUNT * 2] = {0};
-..\BSP\src\bsp_sensor.c: 1 warning, 0 errors
-compiling bsp_motor.c...
-compiling bsp_encoder.c...
-..\BSP\src\bsp_encoder.c(71): warning:  #177-D: variable "LastLeftEncoder" was declared but never referenced
-  	static int32_t LastLeftEncoder, LastRightEncoder;
-..\BSP\src\bsp_encoder.c(71): warning:  #177-D: variable "LastRightEncoder" was declared but never referenced
-  	static int32_t LastLeftEncoder, LastRightEncoder;
-..\BSP\src\bsp_encoder.c(74): warning:  #550-D: variable "runtime" was set but never used
-  	int32_t runtime;
-..\BSP\src\bsp_encoder.c: 3 warnings, 0 errors
-compiling bsp_i2c.c...
-compiling bsp_mpu.c...
-compiling inv_mpu.c...
-compiling app_filter.c...
-compiling app_debug.c...
 compiling app_pid.c...
-compiling app_sort.c...
-linking...
-Program Size: Code=29904 RO-data=3944 RW-data=196 ZI-data=2220  
-FromELF: creating hex file...
-".\Objects\FreescaleCar.axf" - 0 Error(s), 4 Warning(s).
+..\APP\src\app_pid.c(108): warning:  #223-D: function "drv_flash_ReadSector" declared implicitly
+  	Car.PID.Turn_Kp = drv_flash_ReadSector(PID_PARA_FLASH_ADDR, 0, float);
+..\APP\src\app_pid.c(108): error:  #29: expected an expression
+  	Car.PID.Turn_Kp = drv_flash_ReadSector(
+ID_PARA_FLASH_ADDR, 0, float);
+..\APP\src\app_pid.c(109): error:  #29: expected an expression
+  	Car.PID.Turn_Ki = drv_flash_ReadSector(
+ID_PARA_FLASH_ADDR, 4, float);
+..\APP\src\app_pid.c(110): error:  #29: expected an expression
+  	Car.PID.Turn_Kd = drv_flash_ReadSector(
+ID_PARA_FLASH_ADDR, 8, float);
+..\APP\src\app_pid.c(112): error:  #136: struct "<unnamed>" has no field "SpeedKp"
+  	Car.PID.SpeedKp = drv_flash_ReadSector(PID_PARA_FLASH_ADDR, 12, float);
+..\APP\src\app_pid.c(112): error:  #29: expected an expression
+  	Car.PID.SpeedKp = drv_flash_ReadSector(
+ID_PARA_FLASH_ADDR, 12, float);
+..\APP\src\app_pid.c(113): error:  #136: struct "<unnamed>" has no field "SpeedKi"
+  	Car.PID.SpeedKi = drv_flash_ReadSector(PID_PARA_FLASH_ADDR, 16, float);
+..\APP\src\app_pid.c(113): error:  #29: expected an expression
+  	Car.PID.SpeedKi = drv_flash_ReadSector(
+ID_PARA_FLASH_ADDR, 16, float);
+..\APP\src\app_pid.c(114): error:  #136: struct "<unnamed>" has no field "SpeedKd"
+  	Car.PID.SpeedKd = drv_flash_ReadSector(PID_PARA_FLASH_ADDR, 20, float);
+..\APP\src\app_pid.c(114): error:  #29: expected an expression
+  	Car.PID.SpeedKd = drv_flash_ReadSector(
+ID_PARA_FLASH_ADDR, 20, float);
+..\APP\src\app_pid.c: 1 warning, 9 errors
+".\Objects\FreescaleCar.axf" - 9 Error(s), 1 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
-  E:\学习资料\比赛\飞思卡尔智能车大赛\直立\FreescaleCar\USER\RTE
+  E:\学习资料\比赛\飞思卡尔智能车大赛\直立电磁组\FreescaleCar\USER\RTE
   D:\KeilPack\Keil\Kinetis_KEAxx_DFP\1.3.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:07
+Target not created.
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

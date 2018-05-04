@@ -27,8 +27,8 @@
 /*  电机PWM通道宏定义  */
 # define DRV_PWM1_CHANNEL		ftm_ch0
 # define DRV_PWM2_CHANNEL		ftm_ch1
-# define DRV_PWM3_CHANNEL		ftm_ch2
-# define DRV_PWM4_CHANNEL		ftm_ch3
+# define DRV_PWM3_CHANNEL		ftm_ch3
+# define DRV_PWM4_CHANNEL		ftm_ch4
 
 /*  电机驱动使能引脚  */
 //# define DRV_EN_PIN			E5
@@ -37,17 +37,15 @@
 
 /*  电机控制结构体定义  */
 typedef struct
-{
-	int16_t PWM_Frequency;	/*  电机PWM频率  */
-	
+{	
 	int16_t LeftPwm;				/*  左边电机PWM  */
 	int16_t RightPwm;				/*  右边电机PWM  */
 	
-	int32_t LeftEncoder;		/*  左边电机编码器  */
-	int32_t RightEncoder;		/*  右边电机编码器  */
+	uint16_t LeftEncoder;		/*  左边电机编码器  */
+	uint16_t RightEncoder;		/*  右边电机编码器  */
 	
-	int16_t LeftSpeed;			/*  左边电机转速  */
-	int16_t RightSpeed;			/*  右边电机转速  */
+	float LeftSpeed;			/*  左边电机转速  */
+	float RightSpeed;			/*  右边电机转速  */
 }Motor_TypeDef;
 
 

@@ -43,6 +43,7 @@
 .\objects\bsp_sensor.o: ..\BSP\inc\bsp_timer.h
 .\objects\bsp_sensor.o: ..\LIB\inc\drv_pit.h
 .\objects\bsp_sensor.o: ..\BSP\inc\bsp_key.h
+.\objects\bsp_sensor.o: ..\BSP\inc\bsp.h
 .\objects\bsp_sensor.o: ..\BSP\inc\bsp_oled.h
 .\objects\bsp_sensor.o: ..\BSP\inc\bsp_flash.h
 .\objects\bsp_sensor.o: ..\BSP\inc\bsp_motor.h

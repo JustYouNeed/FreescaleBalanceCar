@@ -179,13 +179,13 @@ uint8_t bsp_mpu_Config(void)
 	bsp_mpu_IICConfig();
 	
 	bsp_mpu_WriteByte(MPU_PWR_MGMT1_REG, 0x80);
-	bsp_tim_DelayMs(100);
+	bsp_tim_DelayMs(200);
 	bsp_mpu_WriteByte(MPU_PWR_MGMT1_REG, 0x00);
 	bsp_mpu_SetGyroFsr(3);
 	bsp_mpu_SetAccelFsr(0);
 	bsp_mpu_SetRate(100);
 	bsp_mpu_WriteByte(MPU_USER_CTRL_REG, 0x00);
-	bsp_mpu_WriteByte(MPU_FIFO_EN_REG, 0xff);
+	bsp_mpu_WriteByte(MPU_FIFO_EN_REG, 0x00);
 	bsp_mpu_WriteByte(MPU_INTBP_CFG_REG, 0x80);
 	bsp_mpu_WriteByte(MPU_INT_EN_REG, 0x00);
 	
@@ -196,7 +196,7 @@ uint8_t bsp_mpu_Config(void)
 	{
 		bsp_mpu_WriteByte(MPU_PWR_MGMT1_REG, 0x01);
 		bsp_mpu_WriteByte(MPU_PWR_MGMT2_REG, 0x00);
-		bsp_mpu_SetRate(50);
+		bsp_mpu_SetRate(100);
 	}else
 		return 1;
 	

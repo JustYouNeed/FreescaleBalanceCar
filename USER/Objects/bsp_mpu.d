@@ -1,7 +1,6 @@
 .\objects\bsp_mpu.o: ..\BSP\src\bsp_mpu.c
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp_mpu.h
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp.h
-.\objects\bsp_mpu.o: ..\BSP\inc\bsp_led.h
 .\objects\bsp_mpu.o: ..\LIB\inc\headfile.h
 .\objects\bsp_mpu.o: ..\LIB\inc\common.h
 .\objects\bsp_mpu.o: ..\LIB\inc\headfile.h
@@ -38,10 +37,12 @@
 .\objects\bsp_mpu.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\bsp_mpu.o: ..\LIB\inc\KEA128_spi.h
 .\objects\bsp_mpu.o: ..\CORE\SKEAZ1284.h
+.\objects\bsp_mpu.o: ..\BSP\inc\bsp_led.h
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp_uart.h
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp_timer.h
 .\objects\bsp_mpu.o: ..\LIB\inc\drv_pit.h
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp_key.h
+.\objects\bsp_mpu.o: ..\BSP\inc\bsp.h
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp_oled.h
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp_flash.h
 .\objects\bsp_mpu.o: ..\BSP\inc\bsp_motor.h

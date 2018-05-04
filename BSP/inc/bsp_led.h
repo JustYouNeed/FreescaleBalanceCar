@@ -28,20 +28,19 @@
 # include "headfile.h"
 
 /*  定义按键开关时引脚的状态  */
-# define LED_OFF				1
-# define LED_ON					0
+# define LED_OFF				0
+# define LED_ON					1
 
 /*  LED灯引脚定义  */
-# define LED1_PIN			C2
-# define LED2_PIN			B4
-# define LED3_PIN			E5
+# define LED_RED_PIN			B0
+# define LED_BLUE_PIN			B1
 
 /*  LED ID枚举变量  */
 typedef enum
 {
 	LED_ALL = 0x0,
-	LED1,
-	LED2,
+	LED_RED,
+	LED_BLUE,
 }LED_IDType;
 
 

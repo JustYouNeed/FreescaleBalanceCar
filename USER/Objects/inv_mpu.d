@@ -46,6 +46,7 @@
 .\objects\inv_mpu.o: ..\BSP\inc\bsp_timer.h
 .\objects\inv_mpu.o: ..\LIB\inc\drv_pit.h
 .\objects\inv_mpu.o: ..\BSP\inc\bsp_key.h
+.\objects\inv_mpu.o: ..\BSP\inc\bsp.h
 .\objects\inv_mpu.o: ..\BSP\inc\bsp_oled.h
 .\objects\inv_mpu.o: ..\BSP\inc\bsp_flash.h
 .\objects\inv_mpu.o: ..\BSP\inc\bsp_motor.h

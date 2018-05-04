@@ -1,7 +1,6 @@
 .\objects\freescalecar.o: FreescaleCar.c
 .\objects\freescalecar.o: FreescaleCar.h
 .\objects\freescalecar.o: ..\BSP\inc\bsp.h
-.\objects\freescalecar.o: ..\BSP\inc\bsp_led.h
 .\objects\freescalecar.o: ..\LIB\inc\headfile.h
 .\objects\freescalecar.o: ..\LIB\inc\common.h
 .\objects\freescalecar.o: ..\LIB\inc\headfile.h
@@ -38,10 +37,12 @@
 .\objects\freescalecar.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\freescalecar.o: ..\LIB\inc\KEA128_spi.h
 .\objects\freescalecar.o: ..\CORE\SKEAZ1284.h
+.\objects\freescalecar.o: ..\BSP\inc\bsp_led.h
 .\objects\freescalecar.o: ..\BSP\inc\bsp_uart.h
 .\objects\freescalecar.o: ..\BSP\inc\bsp_timer.h
 .\objects\freescalecar.o: ..\LIB\inc\drv_pit.h
 .\objects\freescalecar.o: ..\BSP\inc\bsp_key.h
+.\objects\freescalecar.o: ..\BSP\inc\bsp.h
 .\objects\freescalecar.o: ..\BSP\inc\bsp_oled.h
 .\objects\freescalecar.o: ..\BSP\inc\bsp_flash.h
 .\objects\freescalecar.o: ..\BSP\inc\bsp_motor.h

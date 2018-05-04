@@ -17,10 +17,10 @@
 
 # include "headfile.h"
 
-# define BIT1_PIN			I1
-# define BIT2_PIN			I2
-# define BIT3_PIN			E2
-# define BIT4_PIN			E3
+# define BIT1_PIN			G7
+# define BIT2_PIN			G6
+# define BIT3_PIN			F1
+# define BIT4_PIN			F0
 
 
 

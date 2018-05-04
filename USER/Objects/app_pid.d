@@ -1,7 +1,6 @@
 .\objects\app_pid.o: ..\APP\src\app_pid.c
 .\objects\app_pid.o: ..\APP\inc\app_pid.h
 .\objects\app_pid.o: ..\BSP\inc\bsp.h
-.\objects\app_pid.o: ..\BSP\inc\bsp_led.h
 .\objects\app_pid.o: ..\LIB\inc\headfile.h
 .\objects\app_pid.o: ..\LIB\inc\common.h
 .\objects\app_pid.o: ..\LIB\inc\headfile.h
@@ -38,10 +37,12 @@
 .\objects\app_pid.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\app_pid.o: ..\LIB\inc\KEA128_spi.h
 .\objects\app_pid.o: ..\CORE\SKEAZ1284.h
+.\objects\app_pid.o: ..\BSP\inc\bsp_led.h
 .\objects\app_pid.o: ..\BSP\inc\bsp_uart.h
 .\objects\app_pid.o: ..\BSP\inc\bsp_timer.h
 .\objects\app_pid.o: ..\LIB\inc\drv_pit.h
 .\objects\app_pid.o: ..\BSP\inc\bsp_key.h
+.\objects\app_pid.o: ..\BSP\inc\bsp.h
 .\objects\app_pid.o: ..\BSP\inc\bsp_oled.h
 .\objects\app_pid.o: ..\BSP\inc\bsp_flash.h
 .\objects\app_pid.o: ..\BSP\inc\bsp_motor.h
@@ -52,3 +53,4 @@
 .\objects\app_pid.o: ..\BSP\inc\bsp_mpu.h
 .\objects\app_pid.o: ..\MPU\inc\inv_mpu.h
 .\objects\app_pid.o: ..\MPU\inc\inv_mpu_dmp_motion_driver.h
+.\objects\app_pid.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

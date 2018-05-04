@@ -1,7 +1,6 @@
 .\objects\app_filter.o: ..\APP\src\app_filter.c
 .\objects\app_filter.o: ..\APP\inc\app_filter.h
 .\objects\app_filter.o: ..\BSP\inc\bsp.h
-.\objects\app_filter.o: ..\BSP\inc\bsp_led.h
 .\objects\app_filter.o: ..\LIB\inc\headfile.h
 .\objects\app_filter.o: ..\LIB\inc\common.h
 .\objects\app_filter.o: ..\LIB\inc\headfile.h
@@ -38,10 +37,12 @@
 .\objects\app_filter.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\app_filter.o: ..\LIB\inc\KEA128_spi.h
 .\objects\app_filter.o: ..\CORE\SKEAZ1284.h
+.\objects\app_filter.o: ..\BSP\inc\bsp_led.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_uart.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_timer.h
 .\objects\app_filter.o: ..\LIB\inc\drv_pit.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_key.h
+.\objects\app_filter.o: ..\BSP\inc\bsp.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_oled.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_flash.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_motor.h

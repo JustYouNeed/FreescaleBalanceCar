@@ -1,6 +1,5 @@
 .\objects\bsp.o: ..\BSP\src\bsp.c
 .\objects\bsp.o: ..\BSP\inc\bsp.h
-.\objects\bsp.o: ..\BSP\inc\bsp_led.h
 .\objects\bsp.o: ..\LIB\inc\headfile.h
 .\objects\bsp.o: ..\LIB\inc\common.h
 .\objects\bsp.o: ..\LIB\inc\headfile.h
@@ -37,10 +36,12 @@
 .\objects\bsp.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\bsp.o: ..\LIB\inc\KEA128_spi.h
 .\objects\bsp.o: ..\CORE\SKEAZ1284.h
+.\objects\bsp.o: ..\BSP\inc\bsp_led.h
 .\objects\bsp.o: ..\BSP\inc\bsp_uart.h
 .\objects\bsp.o: ..\BSP\inc\bsp_timer.h
 .\objects\bsp.o: ..\LIB\inc\drv_pit.h
 .\objects\bsp.o: ..\BSP\inc\bsp_key.h
+.\objects\bsp.o: ..\BSP\inc\bsp.h
 .\objects\bsp.o: ..\BSP\inc\bsp_oled.h
 .\objects\bsp.o: ..\BSP\inc\bsp_flash.h
 .\objects\bsp.o: ..\BSP\inc\bsp_motor.h

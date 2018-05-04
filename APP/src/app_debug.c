@@ -113,11 +113,11 @@ void debug_Handler(void)
 	uint8_t checkSum = 0; //
 	static uint8_t uCnt = 0;
 	
-	(void)UART2_S1;
+	(void)UART0_S1;
 	
-	if(UART2->S1 & UART_S1_RDRF_MASK)  /*  接收数据寄存器满  */
+	if(UART0->S1 & UART_S1_RDRF_MASK)  /*  接收数据寄存器满  */
 	{
-		RecvData = UART2->D;		/*  读取数据并送入接收缓存区  */
+		RecvData = UART0->D;		/*  读取数据并送入接收缓存区  */
 		
 		switch(uCnt)
 		{
@@ -224,7 +224,7 @@ void debug_PIDParaReport(void)
 	uint8_t Buff[18] = {0};
 	short temp;
 	
-	temp = (short)(Car.PID.Balance_Kp * ANO_PID_TRAN_FAC_P);
+	temp = (short)(Car.PID.Balance_Kp * 10);
 	Buff[0] = BYTE2(temp);
 	Buff[1] = BYTE1(temp);
 	
@@ -248,7 +248,7 @@ void debug_PIDParaReport(void)
 	Buff[10] = BYTE2(temp);
 	Buff[11] = BYTE1(temp);
 
-	temp = (short)(Car.PID.Turn_Kp * ANO_PID_TRAN_FAC_D);
+	temp = (short)(Car.PID.Turn_Kp * 10);
 	Buff[12] = BYTE2(temp);
 	Buff[13] = BYTE1(temp);
 	
@@ -256,7 +256,7 @@ void debug_PIDParaReport(void)
 	Buff[14] = BYTE2(temp);
 	Buff[15] = BYTE1(temp);
 	
-	temp = (short)(Car.PID.Turn_Kd * ANO_PID_TRAN_FAC_D);
+	temp = (short)(Car.PID.Turn_Kd * 10);
 	Buff[16] = BYTE2(temp);
 	Buff[17] = BYTE1(temp);
 
@@ -281,7 +281,7 @@ void debug_PIDDownload(void)
 	//取前后两个8位的数据合并成一个16位的数据，并强制转换成一个float型的数据
 	//转换完成后除以相应的传输因子
 	
-	Car.PID.Balance_Kp = MERGE(RecBuff[4], RecBuff[5], float) / ANO_PID_TRAN_FAC_P;
+	Car.PID.Balance_Kp = MERGE(RecBuff[4], RecBuff[5], float) / 10;
 	Car.PID.Balance_Ki = MERGE(RecBuff[6], RecBuff[7], float) / ANO_PID_TRAN_FAC_I;
 	Car.PID.Balance_Kd = MERGE(RecBuff[8], RecBuff[9], float) / ANO_PID_TRAN_FAC_D;
 	
@@ -289,9 +289,9 @@ void debug_PIDDownload(void)
 	Car.PID.Velocity_Ki = MERGE(RecBuff[12], RecBuff[13], float) / 1000;
 	Car.PID.Velocity_Kd = MERGE(RecBuff[14], RecBuff[15], float) / ANO_PID_TRAN_FAC_D;
 	
-	Car.PID.Turn_Kp = MERGE(RecBuff[16], RecBuff[17], float) / ANO_PID_TRAN_FAC_P;
+	Car.PID.Turn_Kp = MERGE(RecBuff[16], RecBuff[17], float) / 10;
 	Car.PID.Turn_Ki = MERGE(RecBuff[18], RecBuff[19], float) / ANO_PID_TRAN_FAC_I;
-	Car.PID.Turn_Kd = MERGE(RecBuff[20], RecBuff[21], float) / ANO_PID_TRAN_FAC_D;
+	Car.PID.Turn_Kd = MERGE(RecBuff[20], RecBuff[21], float) / 10;
 		
 //	Car_ParaStroe();
 	pid_StorePara();	/*  将PID参数保存到Flash中  */
@@ -317,24 +317,24 @@ void debug_SensorDataReport(void)
 	uint8_t Buff[18] = {0};
 	uint8_t cnt = 0;
 	
-	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_H_LM].Average);
-	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_H_LM].Average);
+	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_H_L].Average);
+	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_H_L].Average);
 	
-	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_V_LM].Average);
-	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_V_LM].Average);
+//	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_V_LM].Average);
+//	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_V_LM].Average);
 	
-	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_H_RM].Average);
-	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_H_RM].Average);
+	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_H_R].Average);
+	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_H_R].Average);
 	
-	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_V_RM].Average);
-	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_V_RM].Average);
+//	Buff[cnt++] = BYTE2(Car.Sensor[SENSOR_V_RM].Average);
+//	Buff[cnt++] = BYTE1(Car.Sensor[SENSOR_V_RM].Average);
 	
 	
-	Buff[cnt++] = BYTE2((int16_t)(Car.HorizontalAE * 1000));
-	Buff[cnt++] = BYTE1((int16_t)(Car.HorizontalAE * 1000));
+	Buff[cnt++] = BYTE2((int16_t)(Car.HorizontalAE));
+	Buff[cnt++] = BYTE1((int16_t)(Car.HorizontalAE));
 
-	Buff[cnt++] = BYTE2((int16_t)(Car.VecticalAE * 100));
-	Buff[cnt++] = BYTE1((int16_t)(Car.VecticalAE * 100));
+	Buff[cnt++] = BYTE2((int16_t)(Car.VecticalAE));
+	Buff[cnt++] = BYTE1((int16_t)(Car.VecticalAE));
 	
 
 	debug_DataUpload(Buff,0xf2,cnt);
@@ -375,16 +375,16 @@ void debug_MotorDataReport(void)
 	SendBuff[cnt++] = BYTE2(Car.Motor.RightEncoder);
 	SendBuff[cnt++] = BYTE1(Car.Motor.RightEncoder);
 	
-	SendBuff[cnt++] = BYTE2(Car.Motor.LeftSpeed);
-	SendBuff[cnt++] = BYTE1(Car.Motor.LeftSpeed);
+	SendBuff[cnt++] = BYTE2((int)Car.Motor.LeftSpeed*100);
+	SendBuff[cnt++] = BYTE1((int)Car.Motor.LeftSpeed*100);
 	
-	SendBuff[cnt++] = BYTE2(Car.Motor.RightSpeed);
-	SendBuff[cnt++] = BYTE1(Car.Motor.RightSpeed);
+	SendBuff[cnt++] = BYTE2((int)Car.Motor.RightSpeed*100);
+	SendBuff[cnt++] = BYTE1((int)Car.Motor.RightSpeed*100);
 	
 	debug_DataUpload(SendBuff, 0xf1, cnt);
 }
 
-void debug_MPUDateReport(void)
+void debug_MPUData1Report(void)
 {
 	uint8_t Buff[12] = {0};
 	uint8_t cnt = 0;
@@ -392,8 +392,8 @@ void debug_MPUDateReport(void)
 	Buff[cnt++] = BYTE2((int16_t)(Car.MPU.Roll * 100));
 	Buff[cnt++] = BYTE1((int16_t)(Car.MPU.Roll * 100));
 	
-	Buff[cnt++] = BYTE2((int16_t)((Car.MPU.Pitch - Car.BalanceAngle) * 100));
-	Buff[cnt++] = BYTE1((int16_t)((Car.MPU.Pitch - Car.BalanceAngle) * 100));
+	Buff[cnt++] = BYTE2((int16_t)((Car.MPU.Pitch) * 100));
+	Buff[cnt++] = BYTE1((int16_t)((Car.MPU.Pitch) * 100));
 	
 	Buff[cnt++] = BYTE2((int16_t)(Car.MPU.Yaw * 100));
 	Buff[cnt++] = BYTE1((int16_t)(Car.MPU.Yaw * 100));
@@ -401,6 +401,32 @@ void debug_MPUDateReport(void)
 	debug_DataUpload(Buff,0x01,12);
 }
 
+void debug_MPUData2Report(void)
+{
+	uint8_t SendBuff[32] = {0};
+	uint8_t cnt = 0;
+	
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Accx);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Accx);
+	
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Accy);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Accy);
+	
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Accz);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Accz);
+	
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Gryox);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Gryox);
+	
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Gryoy);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Gryoy);
+	
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Gryoz);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Gryoz);
+	
+	
+	debug_DataUpload(SendBuff, 0x02, 18);
+}
 
 
 /*
@@ -430,72 +456,13 @@ void debug_CarDataReport(void)
 	/*  上传电机数据  */
 	debug_MotorDataReport();
 	
-	debug_MPUDateReport();
+	debug_MPUData1Report();
+	debug_MPUData2Report();
 	
 	TimerTaskRunMutexSignal = 0;
 }
 
 
-
-/*
-*********************************************************************************************************
-*                              debug_ShowPara            
-*
-* Description: 将相关参数通过OLED屏幕显示出来
-*             
-* Arguments  : None.
-*
-* Reutrn     : None.
-*
-* Note(s)    : None.
-*********************************************************************************************************
-*/
-void debug_ShowPara(void)
-{
-	if(TimerTaskRunMutexSignal == 1) return ;
-	TimerTaskRunMutexSignal = 1;
-	
-	bsp_oled_Clear();
-//	bsp_oled_ShowInteger(0,0,(int)(Car.PID.Kp_Straight ), 16);
-//	bsp_oled_ShowInteger(42,0,(int)(Car.PID.Ki_Straight ), 16);
-//	bsp_oled_ShowInteger(84,0,(int)(Car.PID.Kd_Straight ), 16);
-//	
-	bsp_oled_ShowString(0, 0, "L:");
-	bsp_oled_ShowInteger(24, 0, Car.Motor.LeftEncoder, 16);
-	bsp_oled_ShowInteger(80, 0, Car.Motor.LeftSpeed, 16);
-	
-	bsp_oled_ShowString(0, 2, "R:");
-	bsp_oled_ShowInteger(24, 2, Car.Motor.RightEncoder, 16);
-	bsp_oled_ShowInteger(80, 2, Car.Motor.RightSpeed, 16);
-	
-	bsp_oled_ShowString(0, 4, "x:");
-	bsp_oled_ShowInteger(16,4, Car.MPU.Accy, 16);
-	
-	bsp_oled_ShowString(0, 6, "R:");
-	bsp_oled_ShowInteger(16,6, Car.MPU.Pitch, 16);
-//	
-//	bsp_oled_ShowString(0, 4, "z:");
-//	bsp_oled_ShowInteger(24,4, Car.MPU.Gryox, 16);
-//	bsp_oled_ShowString(0, 2, "C0:");
-//	bsp_oled_ShowInteger(24,2,Car.Sensor[SENSOR_H_L].CalibrationMax, 16);
-//	
-//	bsp_oled_ShowString(66, 2, "C3:");
-//	bsp_oled_ShowInteger(90,2,Car.Sensor[SENSOR_V_R].CalibrationMax, 16);
-//	
-//	bsp_oled_ShowString(0, 4, "C0:");
-//	bsp_oled_ShowInteger(24,4,Car.Sensor[SENSOR_H_L].Average, 16);
-//	
-//	bsp_oled_ShowString(66, 4, "C3:");
-//	bsp_oled_ShowInteger(90,4,Car.Sensor[SENSOR_V_R].Average, 16);
-//	
-//	bsp_oled_ShowString(0, 6, "H:");
-//	bsp_oled_ShowInteger(16,6,(int32_t)(Car.HorizontalAE * 10000), 16);
-//	
-//	bsp_oled_ShowString(80 - 16, 6, "V:");
-//	bsp_oled_ShowInteger(80,6,(int32_t)(Car.VecticalAE), 16);
-
-	TimerTaskRunMutexSignal = 0;
-}
 
 /********************************************  END OF FILE  *******************************************/
 

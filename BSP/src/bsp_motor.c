@@ -61,33 +61,28 @@ extern uint16_t period[3];
 */
 void bsp_motor_SetPwm(int16_t LeftPwm, int16_t RightPwm)
 {
-//	DRV_ENABLE();		/*  开启驱动  */
-	
 	/*  设置左边PWM  */
 	if(RightPwm > 0)	/*  电机正转  */
 	{
-		ftm_pwm_duty(ftm2, DRV_PWM2_CHANNEL, RightPwm+3);
-//		ftm_pwm_duty(2, 1, 0 + 3);
-		ftm_pwm_duty(ftm2, DRV_PWM1_CHANNEL, 3);
+		ftm_pwm_duty(ftm2, DRV_PWM1_CHANNEL, RightPwm);
+		ftm_pwm_duty(ftm2, DRV_PWM2_CHANNEL, 0);
 	}
 	else		/*  反转  */
 	{
-		ftm_pwm_duty(ftm2, DRV_PWM2_CHANNEL, 0+3);
-//		ftm_pwm_duty(2, 1, -(RightPwm + 3));
-		ftm_pwm_duty(ftm2, DRV_PWM1_CHANNEL, -(RightPwm-3));
+		ftm_pwm_duty(ftm2, DRV_PWM1_CHANNEL, 0);
+		ftm_pwm_duty(ftm2, DRV_PWM2_CHANNEL, -RightPwm);
 	}
 	
 	/*  设置左边PWM  */
 	if(LeftPwm > 0)	/*  电机正转  */
 	{
-		ftm_pwm_duty(ftm2, DRV_PWM3_CHANNEL, LeftPwm+3);
-//		
-		ftm_pwm_duty(ftm2, DRV_PWM4_CHANNEL, 0+3);
+		ftm_pwm_duty(ftm2, DRV_PWM4_CHANNEL, LeftPwm);
+		ftm_pwm_duty(ftm2, DRV_PWM3_CHANNEL, 0);
 	}
 	else		/*  反转  */
 	{
-		ftm_pwm_duty(ftm2, DRV_PWM3_CHANNEL, 0+3);
-		ftm_pwm_duty(ftm2, DRV_PWM4_CHANNEL, -(LeftPwm-3));
+		ftm_pwm_duty(ftm2, DRV_PWM4_CHANNEL, 0);
+		ftm_pwm_duty(ftm2, DRV_PWM3_CHANNEL, -LeftPwm);
 	}
 }
 

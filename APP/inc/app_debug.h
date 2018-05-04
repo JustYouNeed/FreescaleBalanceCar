@@ -42,7 +42,7 @@
 # define DEFAULT_YAW_KD	0
 
 
-# define debug_Handler	UART2_IRQHandler
+# define debug_Handler	UART0_IRQHandler
 
 
 # define ANO_DATA_PRECESS_ON	0   //	选择是否自动处理数据

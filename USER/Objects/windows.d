@@ -1,0 +1,9 @@
+.\objects\windows.o: ..\GUI_DRV\src\windows.c
+.\objects\windows.o: ..\GUI_DRV\interface\windows.h
+.\objects\windows.o: ..\GUI_DRV\interface\gui_config.h
+.\objects\windows.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\windows.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\windows.o: ..\GUI_DRV\interface\gui_basic.h
+.\objects\windows.o: ..\GUI_DRV\interface\lcmdrv.h
+.\objects\windows.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\windows.o: ..\GUI_DRV\interface\text.h

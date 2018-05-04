@@ -1,7 +1,6 @@
 .\objects\main.o: main.c
 .\objects\main.o: FreescaleCar.h
 .\objects\main.o: ..\BSP\inc\bsp.h
-.\objects\main.o: ..\BSP\inc\bsp_led.h
 .\objects\main.o: ..\LIB\inc\headfile.h
 .\objects\main.o: ..\LIB\inc\common.h
 .\objects\main.o: ..\LIB\inc\headfile.h
@@ -38,10 +37,12 @@
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\main.o: ..\LIB\inc\KEA128_spi.h
 .\objects\main.o: ..\CORE\SKEAZ1284.h
+.\objects\main.o: ..\BSP\inc\bsp_led.h
 .\objects\main.o: ..\BSP\inc\bsp_uart.h
 .\objects\main.o: ..\BSP\inc\bsp_timer.h
 .\objects\main.o: ..\LIB\inc\drv_pit.h
 .\objects\main.o: ..\BSP\inc\bsp_key.h
+.\objects\main.o: ..\BSP\inc\bsp.h
 .\objects\main.o: ..\BSP\inc\bsp_oled.h
 .\objects\main.o: ..\BSP\inc\bsp_flash.h
 .\objects\main.o: ..\BSP\inc\bsp_motor.h
@@ -53,3 +54,4 @@
 .\objects\main.o: ..\MPU\inc\inv_mpu.h
 .\objects\main.o: ..\MPU\inc\inv_mpu_dmp_motion_driver.h
 .\objects\main.o: ..\APP\inc\app_debug.h
+.\objects\main.o: ..\GUI_APP\inc\display.h

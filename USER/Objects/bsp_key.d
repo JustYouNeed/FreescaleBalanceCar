@@ -1,5 +1,6 @@
 .\objects\bsp_key.o: ..\BSP\src\bsp_key.c
 .\objects\bsp_key.o: ..\BSP\inc\bsp_key.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp.h
 .\objects\bsp_key.o: ..\LIB\inc\headfile.h
 .\objects\bsp_key.o: ..\LIB\inc\common.h
 .\objects\bsp_key.o: ..\LIB\inc\headfile.h
@@ -37,3 +38,13 @@
 .\objects\bsp_key.o: ..\LIB\inc\KEA128_spi.h
 .\objects\bsp_key.o: ..\CORE\SKEAZ1284.h
 .\objects\bsp_key.o: ..\BSP\inc\bsp_led.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_uart.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_timer.h
+.\objects\bsp_key.o: ..\LIB\inc\drv_pit.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_key.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_oled.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_flash.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_motor.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_encoder.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_sensor.h
+.\objects\bsp_key.o: ..\BSP\inc\bsp_switch.h

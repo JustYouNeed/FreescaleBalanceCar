@@ -1,8 +1,8 @@
 .\objects\bsp_oled.o: ..\BSP\src\bsp_oled.c
 .\objects\bsp_oled.o: ..\BSP\inc\bsp_oled.h
-.\objects\bsp_oled.o: ..\LIB\inc\common.h
 .\objects\bsp_oled.o: ..\LIB\inc\headfile.h
 .\objects\bsp_oled.o: ..\LIB\inc\common.h
+.\objects\bsp_oled.o: ..\LIB\inc\headfile.h
 .\objects\bsp_oled.o: ..\LIB\inc\KEA128_port_cfg.h
 .\objects\bsp_oled.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\bsp_oled.o: ..\LIB\inc\KEA128_ftm.h
@@ -36,6 +36,6 @@
 .\objects\bsp_oled.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\bsp_oled.o: ..\LIB\inc\KEA128_spi.h
 .\objects\bsp_oled.o: ..\CORE\SKEAZ1284.h
-.\objects\bsp_oled.o: ..\BSP\inc\oledfont.h
+.\objects\bsp_oled.o: ..\GUI_DRV\interface\font.h
 .\objects\bsp_oled.o: ..\BSP\inc\bsp_timer.h
 .\objects\bsp_oled.o: ..\LIB\inc\drv_pit.h

@@ -98,10 +98,9 @@
 #define MPU_ADDR				0X68
 
 
-# define MPU_SDA_PIN			H3
+# define MPU_SDA_PIN			F4
 
-
-# define MPU_SCL_PIN			H4
+# define MPU_SCL_PIN			F5
 
 
 typedef struct

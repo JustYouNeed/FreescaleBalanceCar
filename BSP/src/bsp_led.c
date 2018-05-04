@@ -38,11 +38,8 @@
 */
 void bsp_led_Config(void)
 {
-	/*  初始化LED引脚为输出,初始电平为高  */
-	gpio_init(LED1_PIN, GPO, 1);
-	gpio_init(LED2_PIN, GPO, 1);
-	gpio_init(LED3_PIN, GPO, 1);
-	bsp_led_OFF(LED_ALL);
+	gpio_init(LED_RED_PIN, GPO, LED_OFF);
+	gpio_init(LED_BLUE_PIN, GPO, LED_OFF);
 }
 
 
@@ -65,11 +62,11 @@ void bsp_led_ON(uint8_t LEDx)
 	{
 		case LED_ALL: 
 		{
-			gpio_set(LED1_PIN, LED_ON);
-			gpio_set(LED2_PIN, LED_ON);
+			gpio_set(LED_RED_PIN, LED_ON);
+			gpio_set(LED_BLUE_PIN, LED_ON);
 		}break;
-		case LED1: gpio_set(LED1_PIN, LED_ON);break;
-		case LED2: gpio_set(LED2_PIN, LED_ON);break;
+		case LED_RED: gpio_set(LED_RED_PIN, LED_ON);break;
+		case LED_BLUE: gpio_set(LED_BLUE_PIN, LED_ON);break;
 		default: break;
 	}
 }
@@ -93,11 +90,11 @@ void bsp_led_OFF(uint8_t LEDx)
 	{
 		case LED_ALL: 
 		{
-			gpio_set(LED1_PIN, LED_OFF);
-			gpio_set(LED2_PIN, LED_OFF);
+			gpio_set(LED_RED_PIN, LED_OFF);
+			gpio_set(LED_BLUE_PIN, LED_OFF);
 		}break;
-		case LED1: gpio_set(LED1_PIN, LED_OFF);break;
-		case LED2: gpio_set(LED2_PIN, LED_OFF);break;
+		case LED_RED: gpio_set(LED_RED_PIN, LED_OFF);break;
+		case LED_BLUE: gpio_set(LED_BLUE_PIN, LED_OFF);break;
 		default: break;
 	}
 }
@@ -122,11 +119,11 @@ void bsp_led_Toggle(uint8_t LEDx)
 	{
 		case LED_ALL: 
 		{
-			gpio_turn(LED1_PIN);
-			gpio_turn(LED2_PIN);
+			gpio_turn(LED_RED_PIN);
+			gpio_turn(LED_BLUE_PIN);
 		}break;
-		case LED1: gpio_turn(LED1_PIN);break;
-		case LED2: gpio_turn(LED2_PIN);break;
+		case LED_RED: gpio_turn(LED_RED_PIN);break;
+		case LED_BLUE: gpio_turn(LED_BLUE_PIN);break;
 		default: break;
 	}
 }
