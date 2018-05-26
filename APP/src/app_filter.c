@@ -2,7 +2,7 @@
   *******************************************************************************************************
   * File Name: app_filter.c
   * Author: Vector
-  * Version: V1.0.0
+  * Version: V1.1.0
   * Date: 2018-3-2
   * Brief: 本文件提供了各种滤波函数
   *******************************************************************************************************
@@ -10,6 +10,10 @@
   *		1.Author: Vector
 	*			Date:	2018-3-2
 	*			Mod: 建立文件
+	*
+	*		2.Author: Vector
+	*			Data: 2018-4-20
+	*			Mod: 增加卡尔曼滤波函数
   *
   *******************************************************************************************************
   */	
@@ -20,7 +24,7 @@
   *******************************************************************************************************
 */
 # include "app_filter.h"
-# include "FreescaleCar.h"
+
 /*
 *********************************************************************************************************
 *                            filter_SildingAverage              
@@ -53,6 +57,27 @@ void filter_SildingAverage(uint16_t Array[], uint16_t *Average, uint16_t Length)
 	}
 	*Average = (uint16_t)(sum / Length);
 }
+/*
+*********************************************************************************************************
+*                                   filter_Kalman1Dim_Init       
+*
+* Description: 初始化卡尔曼结构体参数
+*             
+* Arguments  : 
+*
+* Reutrn     : 
+*
+* Note(s)    : 
+*********************************************************************************************************
+*/
+void filter_Kalman1Dim_Init(Kalman1Dim_TypeDef *Kalam_struct, double Q, double R)
+{
+	Kalam_struct->Kg = 0;              //卡尔曼增益
+	Kalam_struct->Output = 0;          //输出量
+	Kalam_struct->P = 0;               //协方差
+	Kalam_struct->Q = Q;               //系统过程噪声的协方差/预测值置信度
+	Kalam_struct->R = R;               //系统测量噪声的协方差/测量值置信度
+}
 
 /*
 *********************************************************************************************************
@@ -67,53 +92,114 @@ void filter_SildingAverage(uint16_t Array[], uint16_t *Average, uint16_t Length)
 * Note(s)    : 
 *********************************************************************************************************
 */
-
-float K1 =0.02; 
-float angle, angle_dot; 	
-float Q_angle=0.01;// 过程噪声的协方差
-float Q_gyro=0.00003;//0.003 过程噪声的协方差 过程噪声的协方差为一个一行两列矩阵
-float R_angle=0.0001;// 测量噪声的协方差 既测量偏差
-float dt=0.005;//                 
-char  C_0 = 1;
-float Q_bias, Angle_err;
-float PCt_0, PCt_1, E;
-float K_0, K_1, t_0, t_1;
-float Pdot[4] ={0,0,0,0};
-float PP[2][2] = { { 1, 0 },{ 0, 1 } };
-void Kalman_Filter(float Accel,float Gyro)		
+void filter_Kalman1Dim(Kalman1Dim_TypeDef *Kalam_Struct, double input)
 {
-	angle+=(Gyro - Q_bias) * dt; //先验估计
-	Pdot[0]=Q_angle - PP[0][1] - PP[1][0]; // Pk-先验估计误差协方差的微分
-
-	Pdot[1]=-PP[1][1];
-	Pdot[2]=-PP[1][1];
-	Pdot[3]=Q_gyro;
-	PP[0][0] += Pdot[0] * dt;   // Pk-先验估计误差协方差微分的积分
-	PP[0][1] += Pdot[1] * dt;   // =先验估计误差协方差
-	PP[1][0] += Pdot[2] * dt;
-	PP[1][1] += Pdot[3] * dt;
-		
-	Angle_err = Accel - angle;	//zk-先验估计
+	Kalam_Struct->P += Kalam_Struct->Q;
 	
-	PCt_0 = C_0 * PP[0][0];
-	PCt_1 = C_0 * PP[1][0];
+	Kalam_Struct->Output += Kalam_Struct->Kg*(input - Kalam_Struct->Output);
 	
-	E = R_angle + C_0 * PCt_0;
+	Kalam_Struct->Kg = Kalam_Struct->P/(Kalam_Struct->P + Kalam_Struct->R);
 	
-	K_0 = PCt_0 / E;
-	K_1 = PCt_1 / E;
-	
-	t_0 = PCt_0;
-	t_1 = C_0 * PP[0][1];
-
-	PP[0][0] -= K_0 * t_0;		 //后验估计误差协方差
-	PP[0][1] -= K_0 * t_1;
-	PP[1][0] -= K_1 * t_0;
-	PP[1][1] -= K_1 * t_1;
-		
-	angle	+= K_0 * Angle_err;	 //后验估计
-	Q_bias	+= K_1 * Angle_err;	 //后验估计
-	angle_dot = Gyro - Q_bias;	 //输出值(后验估计)的微分=角速度
+	Kalam_Struct->P *= (1-Kalam_Struct->Kg);
 }
+
+/*
+*********************************************************************************************************
+*                       filter_KanlmanInit                   
+*
+* Description: 初始化卡尔曼滤波结构体
+*             
+* Arguments  : None.
+*
+* Reutrn     : None.
+*
+* Note(s)    : None.
+*********************************************************************************************************
+*/
+void filter_KanlmanInit(Kalman_TypeDef *Kalman)
+{
+	/*  初始化滤波器输出为0  */
+	Kalman->X[0] = 0;
+	Kalman->X[1] = 0;
+	
+	/*  滤波器采样周期  */
+	Kalman->dt = 0.005;
+	
+	/*  滤波器状态转移矩阵  */
+	Kalman->A[0][0] = 1;
+	Kalman->A[0][1] = -Kalman->dt;
+	Kalman->A[1][0] = 0;
+	Kalman->A[1][1] = 1;
+	
+	/*  控制输入转移矩阵  */
+	Kalman->B[0] = Kalman->dt;
+	Kalman->B[1] = 0;
+	
+	/*  协方差矩阵  */
+	Kalman->P[0][0] = 1;
+	Kalman->P[0][1] = 0;
+	Kalman->P[1][0] = 0;
+	Kalman->P[1][1] = 1;
+	
+	/*  预测值的置信度  */
+	Kalman->Q[0][0] = 0.001;
+	Kalman->Q[0][1] = 0;
+	Kalman->Q[1][0] = 0;
+	Kalman->Q[1][1] = 0.003;
+	
+	/*  测量过程噪声  */
+	Kalman->R = 0.5;
+}
+
+/*
+*********************************************************************************************************
+*                       filter_KalmanFilter                   
+*
+* Description: 卡尔曼滤波函数
+*             
+* Arguments  : 1.Kalman: Kalman控制结构体
+*							 2.Gyro: 测量到的角速度
+*							 3.AccAngle: 测量到的加速度计算出的角度
+*
+* Reutrn     : None.
+*
+* Note(s)    : None.
+*********************************************************************************************************
+*/
+void filter_KalmanFilter(Kalman_TypeDef *Kalman, float Gyro, float AccAngle)
+{	
+	float AngleErr = 0, Kg;
+	
+	/*  公式1,X(k|k-1) = AX(k-1|k-1) + BU(k)  X, A, B, 都为矩阵, 进行先验估计  */
+//	Kalman->X[0] = Kalman->A[0][0] * Kalman->X[0] + Kalman->A[0][1] * Kalman->X[1] + Gyro * Kalman->B[0];
+//	Kalman->X[1] = (Kalman->A[1][0] * Kalman->X[0] + Kalman->A[1][1] * Kalman->X[1]) + Gyro * Kalman->B[1];
+	Kalman->X[0] += (Gyro - Kalman->X[1]) * Kalman->dt;
+	
+	/*  公式2, P(k|k-1) = AP(k-1|k-1)A_T + Q */
+	Kalman->P[0][0] += (Kalman->P[1][0] + Kalman->P[0][1]) * Kalman->A[0][1] + Kalman->Q[0][0];
+	Kalman->P[0][1] += Kalman->P[1][1] * Kalman->A[0][1] + Kalman->Q[0][1];
+	Kalman->P[1][0] += Kalman->P[1][1] * Kalman->A[0][1] + Kalman->Q[1][0];
+	Kalman->P[1][1] += Kalman->Q[1][1];
+	
+	/*  公式3, Kg(k) = P(k|k-1)H_T/(HP(k|k-1)H_T + R), H为系数矩阵 H = | 1 0 |  */
+	Kg = Kalman->P[0][0] + Kalman->R;
+	Kalman->Kg[0] = Kalman->P[0][0] / Kg;
+	Kalman->Kg[1] = Kalman->P[1][0] / Kg;
+	
+	/*  公式4, X(k|k) = X(k|k-1) + Kg(k)(Z(k) - H*X(k|k-1)), Z(k)为系统测量输入  */
+	AngleErr = AccAngle - Kalman->X[0];
+	Kalman->X[0] += Kalman->Kg[0] * AngleErr;
+	Kalman->X[1] += Kalman->Kg[1] * AngleErr;
+	Kalman->Gyro = Gyro - Kalman->X[1];
+	
+	/*  公式5, P(k|k) = (I - Kg(k)*H)P(k|k-1)  */
+	Kalman->P[0][0] = Kalman->P[0][0] * (1 - Kalman->Kg[0]);
+	Kalman->P[0][1] = Kalman->P[0][1] * (1 - Kalman->Kg[0]);
+	Kalman->P[1][0] = Kalman->P[1][0] - Kalman->P[0][0] * Kalman->Kg[1];
+	Kalman->P[1][1] = Kalman->P[1][1] - Kalman->P[0][1] * Kalman->Kg[1];
+}
+
+
+
 /********************************************  END OF FILE  *******************************************/
 

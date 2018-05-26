@@ -49,8 +49,3 @@
 .\objects\app_filter.o: ..\BSP\inc\bsp_encoder.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_sensor.h
 .\objects\app_filter.o: ..\BSP\inc\bsp_switch.h
-.\objects\app_filter.o: ..\USER\FreescaleCar.h
-.\objects\app_filter.o: ..\APP\inc\app_pid.h
-.\objects\app_filter.o: ..\BSP\inc\bsp_mpu.h
-.\objects\app_filter.o: ..\MPU\inc\inv_mpu.h
-.\objects\app_filter.o: ..\MPU\inc\inv_mpu_dmp_motion_driver.h

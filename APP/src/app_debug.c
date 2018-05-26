@@ -415,14 +415,14 @@ void debug_MPUData2Report(void)
 	SendBuff[cnt ++] = BYTE2(Car.MPU.Accz);
 	SendBuff[cnt ++] = BYTE1(Car.MPU.Accz);
 	
-	SendBuff[cnt ++] = BYTE2(Car.MPU.Gryox);
-	SendBuff[cnt ++] = BYTE1(Car.MPU.Gryox);
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Gyrox);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Gyrox);
 	
-	SendBuff[cnt ++] = BYTE2(Car.MPU.Gryoy);
-	SendBuff[cnt ++] = BYTE1(Car.MPU.Gryoy);
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Gyroy);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Gyroy);
 	
-	SendBuff[cnt ++] = BYTE2(Car.MPU.Gryoz);
-	SendBuff[cnt ++] = BYTE1(Car.MPU.Gryoz);
+	SendBuff[cnt ++] = BYTE2(Car.MPU.Gyroz);
+	SendBuff[cnt ++] = BYTE1(Car.MPU.Gyroz);
 	
 	
 	debug_DataUpload(SendBuff, 0x02, 18);

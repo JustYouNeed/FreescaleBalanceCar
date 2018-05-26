@@ -44,14 +44,15 @@ int main(void)
 	
 	/*  创建一个硬件定时器,周期3ms,用于小车控制  */
 	bsp_tim_CreateHardTimer(1, 1, Car_Control);
-	
+	bsp_tim_CreateHardTimer(0,5, bsp_mpu_GetAngle);
 //	bsp_motor_SetPwm(200, 200);
 	while(1)
 	{	
-		if(mpu_dmp_get_data(&Car.MPU.Pitch, &Car.MPU.Roll, &Car.MPU.Yaw) == 0)
-		{
-			bsp_mpu_ReadGyro(&Car.MPU.Gryox, &Car.MPU.Gryoy, &Car.MPU.Gryoz);
-		}
+//		if(mpu_dmp_get_data(&Car.MPU.Pitch, &Car.MPU.Roll, &Car.MPU.Yaw) == 0)
+//		{
+////			bsp_mpu_ReadGyro(&Car.MPU.Gyrox, &Car.MPU.Gyroy, &Car.MPU.Gyroz);
+////			bsp_mpu_GetAngle();
+//		}
 	}
 }
 

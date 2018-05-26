@@ -102,11 +102,18 @@
 
 # define MPU_SCL_PIN			F5
 
+# define MPU_GYROZ_ZERO		-43
+# define MPU_GYROY_ZERO		10
+# define MPU_GYROX_ZERO   -37
+# define MPU_ACCX_ZERO    0
+# define MPU_ACCY_ZERO		0
+# define MPU_ACCZ_ZERO		0
+
 
 typedef struct
 {
 	short Accx, Accy, Accz;
-	short Gryox, Gryoy, Gryoz;
+	short Gyrox, Gyroy, Gyroz;
 	float Pitch, Roll, Yaw;
 }MPU_TypeDef;
 
@@ -142,7 +149,7 @@ uint8_t bsp_mpu_ReadAcc(short* ax, short*ay, short*az);
 
 
 void bsp_mpu_DataProcess(void);
-
+void bsp_mpu_GetAngle(void);
 
 # endif
 

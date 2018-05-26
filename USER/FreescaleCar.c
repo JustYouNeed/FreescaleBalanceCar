@@ -106,9 +106,9 @@ void Car_ParaInit(void)
 	Car.DirFuzzy.ErrMax = 90;
 	Car.DirFuzzy.KP = 3;
 	Car.DirFuzzy.KD = 180;
-	Car.DirFuzzy.KPMax = 5;//Car.PID.DirectionKp;
+	Car.DirFuzzy.KPMax = 5.5;//Car.PID.DirectionKp;
 	Car.DirFuzzy.KIMax = 0;//Car.PID.DirectionKi;
-	Car.DirFuzzy.KDMax = 330;//Car.PID.DirectionKd;
+	Car.DirFuzzy.KDMax = 400;//Car.PID.DirectionKd;
 	fuzzy_PIDInit(&Car.DirFuzzy);
 	
 	
@@ -135,7 +135,7 @@ void Car_ParaInit(void)
 	Car.TargetSpeed = 0;
 
 	Car.MaxPWM = 800;
-	Car.BalanceAngle = 6.7;
+	Car.BalanceAngle = 7.2;
 }
 
 
@@ -248,7 +248,7 @@ void Car_BalanceControl(void)
 	/*  计算偏差  */
 	Error = Car.BalanceAngle - Car.MPU.Pitch;
 
-	ErrorDiff = Car.MPU.Gryoy;
+	ErrorDiff = Car.MPU.Gyroy;
 	
 	Kp = Car.PID.Balance_Kp;
 	Kd = Car.PID.Balance_Kd;
@@ -352,7 +352,7 @@ void Car_DirctionControl(void)
 	Error = Car.HorizontalAE;
 	ErrorDiff = Error - LastError;
 	
-	Gyro_Z = Car.MPU.Gryoy - MPU_GRYOZ_ZERO;
+	Gyro_Z = Car.MPU.Gyroy - MPU_GRYOZ_ZERO;
 	
 	/*  由于模糊PID算出来的值有负的,所以需要极性判断  */
 	fuzzy_PIDClac(&Car.DirFuzzy, Error, ErrorDiff);
